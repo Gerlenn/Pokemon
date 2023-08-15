@@ -1,4 +1,9 @@
 package app.pokemon.domain
 
-class PokemonInteractor {
+import javax.inject.Inject
+
+class PokemonInteractor@Inject constructor(
+    private val pokemonRepository: PokemonRepository,
+) {
+
 }

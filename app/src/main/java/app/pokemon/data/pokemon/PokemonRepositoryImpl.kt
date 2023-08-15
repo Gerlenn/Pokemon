@@ -1,4 +1,9 @@
 package app.pokemon.data.pokemon
 
-class PokemonRepositoryImpl {
+import app.pokemon.domain.PokemonRepository
+import javax.inject.Inject
+
+class PokemonRepositoryImpl @Inject constructor(
+) : PokemonRepository {
+
 }
