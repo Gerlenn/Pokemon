@@ -4,10 +4,15 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
+import app.pokemon.data.paging.PokemonPagingSource
 import app.pokemon.domain.PokemonInteractor
 import app.pokemon.presentation.model.Pokemon
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 @HiltViewModel
@@ -15,29 +20,15 @@ class PokemonViewModel @Inject constructor(
     private val pokemonInteractor: PokemonInteractor,
 ) : ViewModel() {
 
-    private val _pokemonList = MutableLiveData<List<Pokemon>>()
-    val pokemonList: LiveData<List<Pokemon>> = _pokemonList
+    val pagingData: Flow<PagingData<Pokemon>> = Pager(
+        config = PagingConfig(pageSize = 20),
+        pagingSourceFactory = { PokemonPagingSource(pokemonInteractor) }
+    ).flow.cachedIn(viewModelScope)
 
-    private val _selectedPokemonName = MutableLiveData<Int>()
-    val selectedPokemonName: LiveData<Int> = _selectedPokemonName
+    private val _selectedPokemonId = MutableLiveData<Int>()
+    val selectedPokemonId: LiveData<Int> = _selectedPokemonId
 
-    private val currentPage = MutableLiveData<Int>()
-    private val itemsPerPage = 20
-
-    init {
-        currentPage.value = 0
-    }
-
-    fun loadNextPage() {
-        val nextPage = currentPage.value?.plus(1) ?: 1
-        viewModelScope.launch {
-            val listPokemons = pokemonInteractor.getPokemonList(nextPage - 1, itemsPerPage)
-            _pokemonList.value = listPokemons
-            currentPage.value = nextPage
-        }
-    }
-
-    fun setSelectedPokemonName(pokemonId: Int) {
-        _selectedPokemonName.value = pokemonId
+    fun setSelectedPokemonId(pokemonId: Int) {
+        _selectedPokemonId.value = pokemonId
     }
 }

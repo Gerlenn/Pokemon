@@ -8,11 +8,9 @@ import app.pokemon.data.database.entities.PokemonEntity
 
 @Dao
 interface PokemonDAO {
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertAll(pokemons: List<PokemonEntity>)
 
-    @Query("SELECT(SELECT COUNT(*) FROM pokemon_table) !=0")
-    fun doesPokemonEntityExist(): Boolean
-
+    @Query("SELECT * FROM pokemon_table")
+    suspend fun getAllPokemons(): List<PokemonEntity>
 }
