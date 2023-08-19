@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Pokemon</string>
     <string name="details_not_found">Pokemon details not found in the database</string>
+    <string name="no_internet_connection">No internet connection!</string>
 </resources>
