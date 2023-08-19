@@ -38,4 +38,9 @@ class PokemonViewModel @Inject constructor(
         _navigateWithID.value = NavigateWithId(
             R.id.pokemonDetailsFragment, pokemonId)
     }
+
+    suspend fun hasDataInDatabase(): Boolean {
+        val listPokemonsFromDatabase = pokemonInteractor.getPokemonListFromDatabase()
+        return listPokemonsFromDatabase.isNotEmpty()
+    }
 }
