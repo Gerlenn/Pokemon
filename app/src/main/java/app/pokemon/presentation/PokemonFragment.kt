@@ -4,14 +4,15 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import app.pokemon.databinding.FragmentPokemonBinding
 import app.pokemon.presentation.adapter.PokemonAdapter
 import app.pokemon.presentation.adapter.listener.PokemonListener
+import app.pokemon.utils.AppConstants.POKEMON_ID
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -46,8 +47,13 @@ class PokemonFragment : Fragment(), PokemonListener {
             }
         }
 
-        viewModel.selectedPokemonId.observe(viewLifecycleOwner) { pokemonId ->
-            Toast.makeText(requireContext(), "PokemonID: $pokemonId", Toast.LENGTH_SHORT).show()
+        viewModel.navigateWithID.observe(viewLifecycleOwner) { navWithBundle ->
+            if (navWithBundle != null) {
+                val bundle = Bundle()
+                bundle.putInt(POKEMON_ID, navWithBundle.id)
+                findNavController().navigate(navWithBundle.destinationId, bundle)
+                viewModel.pokemonSelected()
+            }
         }
     }
 

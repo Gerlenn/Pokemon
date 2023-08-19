@@ -5,6 +5,7 @@ import app.pokemon.R
 import app.pokemon.databinding.PokemonItemBinding
 import app.pokemon.presentation.adapter.listener.PokemonListener
 import app.pokemon.presentation.model.Pokemon
+import app.pokemon.utils.AppConstants.SYMBOL
 import com.squareup.picasso.Picasso
 
 class PokemonViewHolder(
@@ -14,6 +15,7 @@ class PokemonViewHolder(
 
     fun bind(pokemon: Pokemon) {
         viewBinding.pokemonName.text = pokemon.name
+        viewBinding.pokemonID.text = "$SYMBOL${pokemon.id}"
 
         Picasso.get()
             .load(pokemon.spriteUrl)
