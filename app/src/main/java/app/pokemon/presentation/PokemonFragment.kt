@@ -13,13 +13,18 @@ import app.pokemon.databinding.FragmentPokemonBinding
 import app.pokemon.presentation.adapter.PokemonAdapter
 import app.pokemon.presentation.adapter.listener.PokemonListener
 import app.pokemon.utils.AppConstants.POKEMON_ID
+import app.pokemon.utils.InternetConnection
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class PokemonFragment : Fragment(), PokemonListener {
 
     private val viewModel: PokemonViewModel by viewModels()
+
+    @Inject
+    lateinit var internetConnection: InternetConnection
 
     private var _viewBinding: FragmentPokemonBinding? = null
     private val viewBinding get() = _viewBinding!!
@@ -42,8 +47,18 @@ class PokemonFragment : Fragment(), PokemonListener {
         recyclerView.adapter = pagingAdapter
 
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.pagingData.collect { pagingData ->
-                pagingAdapter.submitData(pagingData)
+            val hasInternetConnection = internetConnection.isOnline()
+            val hasDataInDatabase = viewModel.hasDataInDatabase()
+            if (hasInternetConnection || hasDataInDatabase) {
+                viewBinding.recyclerView.visibility = View.VISIBLE
+                viewBinding.noConnect.visibility = View.GONE
+
+                viewModel.pagingData.collect { pagingData ->
+                    pagingAdapter.submitData(pagingData)
+                }
+            } else {
+                viewBinding.recyclerView.visibility = View.GONE
+                viewBinding.noConnect.visibility = View.VISIBLE
             }
         }
 
